@@ -1,0 +1,58 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+
+trigger:
+  branches:
+    include:
+      - dev
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- deploy
+
+jobs:
+- deploy
+  displayName: 'Deploy to Databricks'
+  steps:
+  - task: Bash@3
+    displayName: 'Check Build Reason'
+    inputs:
+      command: 'bash'
+      workingDirectory: ''
+      script: |
+        if [ "$(Build.Reason)" != "IndividualCI" ] && [ "$(Build.Reason)" != "BatchedCI" ]; then
+          echo "This is not a CI build. Exiting..."
+          exit 1
+        fi
+
+  - task: Bash@3
+    displayName: 'Install Databricks CLI'
+    inputs:
+      command: 'bash'
+      workingDirectory: ''
+      script: |
+        pip install databricks-cli
+
+  - task: Bash@3
+    displayName: 'Configure Databricks CLI'
+    inputs:
+      command: 'bash'
+      workingDirectory: ''
+      script: |
+        databricks configure --token $(DATABRICKS_TOKEN) --host https://$(DATABRICKS_WORKSPACE_URL)
+
+  - task: Bash@3
+    displayName: 'Deploy Notebooks to Databricks'
+    inputs:
+      command: 'bash'
+      workingDirectory: ''
+      script: |
+        databricks workspace import_dir --overwrite $(System.DefaultWorkingDirectory)/path/to/notebooks /batch_demo
+    env:
+      DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+      DATABRICKS_WORKSPACE_URL: $(DATABRICKS_WORKSPACE_URL)
