@@ -1,0 +1,16 @@
+trigger:
+  branches:
+    include:
+      - dev
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: Bash@3
+    displayName: 'Test'
+    inputs:
+      command: 'bash'
+      workingDirectory: ''
+      script: |
+        echo "Hello World"
