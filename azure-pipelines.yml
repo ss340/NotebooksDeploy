@@ -8,28 +8,9 @@ pool:
 
 steps:
   - task: Bash@3
-    displayName: 'Install Databricks CLI'
+    displayName: 'Test'
     inputs:
       command: 'bash'
       workingDirectory: ''
       script: |
-        pip install databricks-cli
-
-  - task: Bash@3
-    displayName: 'Configure Databricks CLI'
-    inputs:
-      command: 'bash'
-      workingDirectory: ''
-      script: |
-        databricks configure --token $(DATABRICKS_TOKEN) --host https://$(DATABRICKS_WORKSPACE_URL)
-
-  - task: Bash@3
-    displayName: 'Deploy Notebooks to Databricks'
-    inputs:
-      command: 'bash'
-      workingDirectory: ''
-      script: |
-        databricks workspace import_dir --overwrite $(System.DefaultWorkingDirectory)/batch_demo
-    env:
-      DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
-      DATABRICKS_WORKSPACE_URL: $(DATABRICKS_WORKSPACE_URL)
+        echo "Hello World"
